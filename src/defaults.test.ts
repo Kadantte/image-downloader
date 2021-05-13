@@ -1,47 +1,10 @@
-import { asMockedFunction, mockChrome } from './utils';
+import { asMockedFunction, mockChrome } from './test';
 
 declare var global: any;
 
 beforeEach(() => {
   global.chrome = mockChrome();
   localStorage.clear();
-});
-
-it(`adds a listener on install or update`, () => {
-  require('./defaults');
-  expect(chrome.runtime.onInstalled.addListener).toHaveBeenCalledTimes(1);
-});
-
-it(`opens options page on install`, () => {
-  require('./defaults');
-  const handler = asMockedFunction(chrome.runtime.onInstalled.addListener).mock
-    .calls[0][0];
-  handler({ reason: 'install' });
-  expect(chrome.tabs.create).toHaveBeenCalledWith({
-    url: '/views/options.html',
-  });
-});
-
-it(`clears data from versions before 2.1`, () => {
-  // https://github.com/facebook/jest/issues/6798#issuecomment-412871616
-  const clearSpy = jest.spyOn(Storage.prototype, 'clear');
-  require('./defaults');
-  const handler = asMockedFunction(chrome.runtime.onInstalled.addListener).mock
-    .calls[0][0];
-  handler({ reason: 'update', previousVersion: '1.3' });
-  expect(clearSpy).toHaveBeenCalled();
-  clearSpy.mockRestore();
-});
-
-it(`doesn't clear data from versions after 2.1`, () => {
-  // https://github.com/facebook/jest/issues/6798#issuecomment-412871616
-  const clearSpy = jest.spyOn(Storage.prototype, 'clear');
-  require('./defaults');
-  const handler = asMockedFunction(chrome.runtime.onInstalled.addListener).mock
-    .calls[0][0];
-  handler({ reason: 'update', previousVersion: '2.3' });
-  expect(clearSpy).not.toHaveBeenCalled();
-  clearSpy.mockRestore();
 });
 
 it(`preserves existing options in 'localStorage'`, () => {
@@ -60,7 +23,6 @@ it(`matches 'localStorage' snapshot`, () => {
   require('./defaults');
   expect(global.localStorage).toMatchInlineSnapshot(`
     Storage {
-      "animation_duration": "500",
       "columns": "2",
       "columns_default": "2",
       "filter_max_height": "3000",
@@ -93,13 +55,12 @@ it(`matches 'localStorage' snapshot`, () => {
       "new_file_name_default": "",
       "only_images_from_links": "false",
       "only_images_from_links_default": "false",
-      "options": "[\\"folder_name\\",\\"new_file_name\\",\\"filter_url\\",\\"filter_url_mode\\",\\"filter_min_width\\",\\"filter_min_width_enabled\\",\\"filter_max_width\\",\\"filter_max_width_enabled\\",\\"filter_min_height\\",\\"filter_min_height_enabled\\",\\"filter_max_height\\",\\"filter_max_height_enabled\\",\\"only_images_from_links\\",\\"show_download_confirmation\\",\\"show_download_notification\\",\\"show_file_renaming\\",\\"show_image_url\\",\\"show_open_image_button\\",\\"show_download_image_button\\",\\"columns\\",\\"image_min_width\\",\\"image_max_width\\"]",
+      "show_advanced_filters": "true",
+      "show_advanced_filters_default": "true",
       "show_download_confirmation": "true",
       "show_download_confirmation_default": "true",
       "show_download_image_button": "true",
       "show_download_image_button_default": "true",
-      "show_download_notification": "true",
-      "show_download_notification_default": "true",
       "show_file_renaming": "true",
       "show_file_renaming_default": "true",
       "show_image_url": "true",

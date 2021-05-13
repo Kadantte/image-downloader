@@ -1,4 +1,5 @@
-import html from './html.js';
+import html from '../html.js';
+import * as actions from './actions.js';
 
 export const ImageUrlTextbox = (props) => html`
   <input
@@ -19,28 +20,33 @@ export const OpenImageButton = ({ imageUrl, onClick, ...props }) => {
       style=${{ backgroundImage: `url("/images/open.svg")` }}
       onClick=${(e) => {
         chrome.tabs.create({ url: imageUrl, active: false });
-        onClick?.(e);
+        if (onClick) {
+          onClick(e);
+        }
       }}
       ...${props}
-    >
-      &nbsp;
-    </button>
+    />
   `;
 };
 
-export const DownloadImageButton = ({ imageUrl, onClick, ...props }) => {
+export const DownloadImageButton = ({
+  imageUrl,
+  options,
+  onClick,
+  ...props
+}) => {
   return html`
     <button
       type="button"
       title="Download"
       style=${{ backgroundImage: `url("/images/download.svg")` }}
       onClick=${(e) => {
-        chrome.downloads.download({ url: imageUrl });
-        onClick?.(e);
+        actions.downloadImages([imageUrl], options);
+        if (onClick) {
+          onClick(e);
+        }
       }}
       ...${props}
-    >
-      &nbsp;
-    </button>
+    />
   `;
 };

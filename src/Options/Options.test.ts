@@ -1,10 +1,10 @@
-import { mockChrome } from './utils';
+import { mockChrome } from '../test';
 
 declare var global: any;
 
 beforeEach(() => {
   localStorage.clear();
-  global.$ = require('../lib/jquery-3.5.1.min');
+  global.$ = require('../../lib/jquery-3.5.1.min');
   ($.fn as any).fadeIn = function (duration, fn) {
     setTimeout(duration, fn);
     return this;
@@ -36,11 +36,6 @@ const options = [
   {
     input: '#show_download_confirmation_checkbox',
     key: 'show_download_confirmation',
-    ...checkboxOptions,
-  },
-  {
-    input: '#show_download_notification_checkbox',
-    key: 'show_download_notification',
     ...checkboxOptions,
   },
   {
@@ -89,7 +84,7 @@ describe(`initialize control values`, () => {
       describe(option.key, () => {
         it(value.toString(), () => {
           localStorage[option.key] = value.toString();
-          require('./options');
+          require('./Options');
           expect($(option.input).prop(option.prop)).toBe(value);
         });
       });
@@ -102,7 +97,7 @@ describe(`save`, () => {
     describe(option.key, () => {
       option.values.forEach((value) => {
         it(value.toString(), () => {
-          require('./options');
+          require('./Options');
 
           option.trigger($(option.input), value);
           $('#save_button').trigger('click');
@@ -123,8 +118,8 @@ describe(`reset`, () => {
     describe(option.key, () => {
       option.values.forEach((value) => {
         it(value.toString(), () => {
-          require('./defaults');
-          require('./options');
+          require('../defaults');
+          require('./Options');
 
           option.trigger($(option.input), value);
           $('#reset_button').trigger('click');
@@ -151,8 +146,8 @@ describe(`clear data`, () => {
     describe(option.key, () => {
       option.values.forEach((value) => {
         it(value.toString(), () => {
-          require('./defaults');
-          require('./options');
+          require('../defaults');
+          require('./Options');
 
           option.trigger($(option.input), value);
           $('#save_button').trigger('click');

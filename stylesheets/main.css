@@ -2,7 +2,7 @@
   /* Colors */
   /* Neutral */
   --neutral-lightest: hsl(0, 0%, 100%);
-  --neutral-lighter: hsl(300, 11%, 96%);
+  --neutral-lighter: hsl(0, 0%, 95%);
   --neutral-light: hsl(300, 11%, 80%);
   --neutral: hsl(300, 11%, 60%);
   --neutral-dark: hsl(300, 11%, 10%);
@@ -30,8 +30,9 @@
   --danger: hsl(6, 78%, 54%);
 
   /* Foreground */
-  --foreground-light: hsl(0, 0%, 60%);
   --foreground: hsl(0, 0%, 20%);
+  --foreground-light: hsl(0, 0%, 70%);
+  --foreground-inverse: hsl(0, 0%, 100%);
 
   /* Border radii */
   --border-radius-sm: 2px;
@@ -48,7 +49,8 @@
 
   --transition-all: all 200ms var(--transition-timing-ease-out);
   --transition-background: background 200ms var(--transition-timing-ease-out);
-  --transition-border-color: border-color 200ms var(--transition-timing-ease-out);
+  --transition-border-color: border-color 200ms
+    var(--transition-timing-ease-out);
   --transition-box-shadow: box-shadow 200ms var(--transition-timing-ease-out);
   --transition-color: color 200ms var(--transition-timing-ease-out);
   --transition-opacity: opacity 200ms var(--transition-timing-linear); /* Timing opacity looks weird */
@@ -56,10 +58,13 @@
 
   /* Misc */
   --border-color: var(--neutral-transparent-5);
-  --image-background: var(--neutralLight);
-  --input-background: var(--neutral-transparent-5);
+  --image-background: var(--neutral-light);
   --images-container-gap: 8px;
   --images-container-padding: 12px;
+  --input-background: var(--neutral-transparent-5);
+  --tab-background: var(--neutral-lightest);
+  --tab-border: var(--neutral-lighter);
+  --tab-header-background: var(--neutral-lighter);
 }
 
 html {
@@ -79,8 +84,43 @@ body {
   color: var(--foreground);
 }
 
+/* https://stackoverflow.com/questions/11243337/a-taller-than-its-img-child */
+a > img {
+  display: block;
+}
+
+img {
+  max-width: 100%;
+}
+
 svg {
   fill: currentColor;
+}
+
+fieldset {
+  border-color: var(--border-color);
+  border-width: 0;
+  border-top-width: 2px;
+  padding-right: 0;
+  padding-left: 0;
+}
+
+fieldset + fieldset {
+  margin-top: 12px;
+}
+
+fieldset > p:first-of-type {
+  margin-top: 0;
+}
+
+fieldset > p:last-of-type {
+  margin-bottom: 0;
+}
+
+legend {
+  margin-left: -9px;
+  padding: 0 8px;
+  font-weight: bold;
 }
 
 .left {
@@ -93,7 +133,11 @@ svg {
   clear: both;
 }
 
-/* labels */
+.hidden {
+  display: none;
+}
+
+/* text */
 .accent {
   color: var(--accent);
 }
@@ -108,6 +152,23 @@ svg {
 }
 .light {
   color: var(--foreground-light);
+}
+.inverse {
+  color: var(--foreground-inverse);
+}
+
+/* backgrounds */
+.bg-accent {
+  background: var(--accent);
+}
+.bg-success {
+  background: var(--success);
+}
+.bg-warning {
+  background: var(--warning);
+}
+.bg-danger {
+  background: var(--danger);
 }
 
 /* links */
@@ -138,14 +199,21 @@ select {
   font-size: 12px;
 }
 
-input[type='text'] {
+input[type='text'],
+input[type='number'],
+select {
   border: 0;
   background: var(--input-background);
   padding: 8px 12px;
 }
 
+input[type='number'] {
+  padding-right: 4px;
+}
+
 select {
-  padding: 6px 12px;
+  cursor: pointer;
+  padding: 7px 12px;
 }
 
 input[type='button'],
@@ -161,8 +229,11 @@ input[type='button'] {
   transition: var(--transition-background);
 }
 input[type='button']:disabled {
-  cursor: not-allowed;
+  cursor: help;
   opacity: 0.6;
+}
+input[type='button'].loading:disabled {
+  cursor: wait;
 }
 
 /* accent */
@@ -175,46 +246,76 @@ input[type='button'].accent:active {
   background: var(--accent);
 }
 
+input[type='button'].accent.ghost {
+  border: 2px solid var(--accent);
+  background: var(--neutral-lightest);
+  color: var(--accent);
+}
+
 /* success */
 input[type='button'].success {
+  border: 2px solid var(--success-light);
   background: var(--success-light);
 }
 input[type='button'].success:hover,
 input[type='button'].success:focus,
 input[type='button'].success:active {
+  border: 2px solid var(--success);
   background: var(--success);
+}
+
+input[type='button'].success.ghost {
+  border: 2px solid var(--success);
+  background: var(--neutral-lightest);
+  color: var(--success);
 }
 
 /* warning */
 input[type='button'].warning {
+  border: 2px solid var(--warning-light);
   background: var(--warning-light);
 }
 input[type='button'].warning:hover,
 input[type='button'].warning:focus,
 input[type='button'].warning:active {
+  border: 2px solid var(--warning);
   background: var(--warning);
+}
+
+input[type='button'].warning.ghost {
+  border: 2px solid var(--warning);
+  background: var(--neutral-lightest);
+  color: var(--warning);
 }
 
 /* danger */
 input[type='button'].danger {
+  border: 2px solid var(--danger-light);
   background: var(--danger-light);
 }
 input[type='button'].danger:hover,
 input[type='button'].danger:focus,
 input[type='button'].danger:active {
+  border: 2px solid var(--danger);
   background: var(--danger);
 }
 
-/* ghost */
-input[type='button'].ghost {
-  border: 2px solid var(--neutral-light);
+input[type='button'].danger.ghost {
+  border: 2px solid var(--danger);
+  background: var(--neutral-lightest);
+  color: var(--danger);
+}
+
+/* neutral */
+input[type='button'].neutral {
+  border: 2px solid var(--neutral-transparent-20);
+  background: var(--neutral-transparent-20);
+}
+
+input[type='button'].neutral.ghost {
+  border: 2px solid var(--neutral-transparent-20);
   background: var(--neutral-lightest);
   color: var(--foreground);
-}
-input[type='button'].ghost:hover,
-input[type='button'].ghost:focus,
-input[type='button'].ghost:active {
-  background: var(--neutral-lighter);
 }
 
 label {
